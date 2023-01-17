@@ -1,0 +1,76 @@
+// Online Java Compiler
+// Use this editor to write, compile and run your Java code online
+import java.util.*;
+class Q
+{
+    boolean check=false;
+    int num;;
+    public synchronized void put(int num)
+    {
+        if(check)
+        {
+            try{wait();}catch(Exception e){}
+        }
+        System.out.println("put"+num);
+        this.num=num;
+        check=true;
+        notify();
+    }
+    public synchronized void get()
+    {
+        if(!check)
+        {
+            try{wait();}catch(Exception e){}
+        }
+        System.out.println("get"+num);
+        check=false;
+        notify();
+    }
+}
+class producer implements Runnable
+{
+    Q q;
+    public producer(Q q)
+    {
+        this.q=q;
+        Thread t=new Thread(this,"producer");
+        t.start();
+    }
+    public void run()
+    {
+        
+        int i=0;
+        while(true)
+        {
+            q.put(i++);
+            try{Thread.sleep(1000);}catch(Exception e){}
+        }
+    }
+}
+class consumer implements Runnable
+{
+    Q q;
+    public consumer(Q q)
+    {
+        this.q=q;
+        Thread t=new Thread(this,"cunsumer");
+        t.start();
+    }
+    public void run()
+    {
+        
+        while(true)
+        {
+            q.get();
+            try{Thread.sleep(1000);}catch(Exception e){}
+        }
+    }
+}
+class HelloWorld extends Thread {
+    
+    public static void main(String[] args) {
+        Q q=new Q();
+        new producer(q);
+        new consumer(q);
+    }
+}
