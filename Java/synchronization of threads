@@ -1,0 +1,38 @@
+class HelloWorld  {
+    int count;
+    public synchronized void fun()
+    {
+        count++;
+    }
+    public static void main(String[] args) {
+        HelloWorld ob=new HelloWorld();
+        Thread t1=new Thread(new Runnable()
+        {
+            public void run()
+            {
+                for(int i=0;i<1000;i++)
+                {
+                    ob.fun();
+                }
+            }
+        });
+        Thread t2=new Thread(new Runnable()
+        {
+            public void run()
+            {
+                for(int i=0;i<1000;i++)
+                {
+                    ob.fun();
+                }
+            }
+        });
+        t1.start();
+        t2.start();
+        try{
+        t1.join();
+        t2.join();
+        }
+        catch(Exception e){}
+        System.out.println(ob.count);
+    }
+}
